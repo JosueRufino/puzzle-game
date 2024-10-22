@@ -1,0 +1,25 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "json-server": "json-server --watch db.json --port 4000",
+    "dev:all": "concurrently \"npm run dev\" \"npm run json-server\"",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "nuxt": "^3.13.2",
+    "sweetalert2": "^11.14.3",
+    "vue": "latest",
+    "vue-router": "latest"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "json-server": "^1.0.0-beta.3"
+  }
+}

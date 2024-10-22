@@ -1,0 +1,42 @@
+{
+  "users": [
+    {
+      "id": "974b",
+      "username": "jrufino",
+      "password": "rufino",
+      "records": [
+        {
+          "date": "2024-10-20",
+          "turns": 17,
+          "time": null,
+          "mode": "classic"
+        },
+        {
+          "date": "2024-10-20",
+          "turns": null,
+          "time": 33,
+          "mode": "timer"
+        },
+        {
+          "date": "2024-10-20",
+          "turns": 19,
+          "time": null,
+          "mode": "classic"
+        },
+        {
+          "date": "2024-10-21",
+          "turns": 0,
+          "time": null,
+          "mode": "classic"
+        }
+      ]
+    },
+    {
+      "id": "500d",
+      "username": "mupinto",
+      "password": "meupinto",
+      "records": []
+    }
+  ],
+  "records": []
+}

@@ -1,70 +1,4 @@
 <template>
-  <!--<div class="d-flex justify-content-center content">
-    <div class="row w-100">
-      <div class="col-6 d-flex justify-content-end">
-        <div style="background-color: white; padding: 5px;">
-          <div class="d-flex justify-content-between mb-2">
-            <div>
-              <p>Josué Rufino</p>
-            </div>
-            <div>
-              <span class="text-white fw-bold">Movimentos:</span>
-              <div
-                class="d-flex justify-content-between"
-                style="
-                  background-color: black;
-                  opacity: 0.9; /* Aumentei um pouco a opacidade */
-                  color: white;
-                  border-radius: 3px;
-                  padding: 8px; /* Maior espaçamento para melhorar a legibilidade */
-                  z-index: 0;
-                "
-              >
-                <icon>icon</icon>
-                <span
-                  id="text-white fw-bold"
-                  style="
-                    font-size: 1.2rem; /* Aumenta o tamanho da fonte */
-                    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Adiciona uma sombra leve */
-                  "
-                >
-                  {{ turns }}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div id="board">
-            <img
-              v-for="(tile, index) in boardTiles"
-              :key="index"
-              :src="getImageSrc(tile.src)"
-              draggable="true"
-              @dragstart="dragStart($event, tile, index)"
-              @dragover.prevent
-              @drop="dragDrop($event, index)"
-            />
-          </div>
-          <div id="pieces">
-            <img
-              v-for="(piece, index) in pieces"
-              :key="index"
-              :src="getImageSrc(piece.src)"
-              draggable="true"
-              @dragstart="dragStart($event, piece, index)"
-              @dragover.prevent
-              @drop="dragDrop($event, -1)"
-            />
-          </div>
-          <h2 v-if="isWon">You won!</h2>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="w-75 h-100" style="background-color: black; opacity: 0.8">
-          josue
-        </div>
-      </div>
-    </div>
-  </div>-->
   <div class="content d-flex justify-content-center">
     <Audio />
     <div class="row w-100">
@@ -221,8 +155,11 @@
               </div>
               <div class="d-flex justify-content-center align-items-end">
                 <div class="mt-5 d-flex">
-                  <h6 class="text-center text-white" v-if="!showRecords">
+                  <h6 class="text-center text-white" v-if="!showRecords && !isGame">
                     Inicie uma partida
+                  </h6>
+                  <h6 class="text-center text-white" v-if="isGame">
+                    Patida iniciada
                   </h6>
                 </div>
                 <div v-if="selectedMode === 'timer'" class="text-white">
@@ -577,7 +514,9 @@ const stopTimer = () => {
 };
 
 // Função para iniciar o jogo e o cronômetro se o modo for "Contra o Relógio"
+const isGame = ref(false)
 const startGame = () => {
+  isGame.value = true
   if (selectedMode.value === "timer") {
     startTimer(); // Inicia o cronômetro para o modo "Contra o Relógio"
   }

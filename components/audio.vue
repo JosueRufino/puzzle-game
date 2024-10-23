@@ -1,7 +1,7 @@
 <!-- src/components/BackgroundAudio.vue -->
 <template>
   <audio ref="backgroundAudio" loop>
-    <!--<source src="/assets/music/background-music.M4A" type="audio/mpeg" />-->
+    <source src="/assets/music/background-music.M4A" type="audio/mpeg" />
   </audio>
 </template>
 

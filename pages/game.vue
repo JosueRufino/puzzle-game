@@ -68,7 +68,7 @@
   <div class="content d-flex justify-content-center">
     <Audio />
     <div class="row w-100">
-      <div class="col-6" style="background-color: white">
+      <div class="col-6" :style="{ backgroundColor: backgroundColor }">
         <div>
           <!--<div class="d-flex justify-content-between mb-2">
             <div>
@@ -100,8 +100,9 @@
               </div>
             </div>
           </div>-->
-          <div id="board">
+          <div id="board" :style="{ backgroundColor: backgroundColor }">
             <img
+            :style="{ backgroundColor: backgroundColor }"
               v-for="(tile, index) in boardTiles"
               :key="index"
               :src="getImageSrc(tile.src)"
@@ -149,6 +150,25 @@
                   class="d-flex justify-content-between align-items-end"
                   style="cursor: pointer"
                 >
+                  <icon
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                    @click="getUsers(data)"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      style="color: white; margin-right: 8px"
+                      height="20"
+                      fill="currentColor"
+                      class="bi bi-trophy-fill"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"
+                      /></svg
+                  ></icon>
+
                   <icon @click="showRecords = !showRecords"
                     ><svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +183,7 @@
                         d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 2h-4v3h4zm0 4h-4v3h4zm0 4h-4v3h3a1 1 0 0 0 1-1zm-5 3v-3H6v3zm-5 0v-3H1v2a1 1 0 0 0 1 1zm-4-4h4V8H1zm0-4h4V4H1zm5-3v3h4V4zm4 4H6v3h4z"
                       /></svg
                   ></icon>
-                  <icon style="margin-left: 8px">
+                  <icon style="margin-left: 8px" @click="setDarkMode">
                     <svg
                       style="color: white"
                       xmlns="http://www.w3.org/2000/svg"
@@ -182,7 +202,7 @@
                     </svg>
                   </icon>
                   <div>
-                    <icon style="margin-left: 8px"
+                    <icon style="margin-left: 8px" @click="setLightMode"
                       ><svg
                         style="color: white"
                         xmlns="http://www.w3.org/2000/svg"
@@ -444,9 +464,9 @@ const showWinModal = () => {
     confirmButtonText: "Reiniciar partida",
     cancelButtonText: "Fechar",
   }).then(async (result) => {
+    addRecord();
     turns.value = 0;
     timeLeft.value = 0;
-    addRecord();
     if (result.isConfirmed) {
       // Agora o record é salvo após a confirmação no modal
       reiniciarJogo(); // Reinicia o jogo somente após salvar o record
@@ -478,14 +498,15 @@ const addRecord = async () => {
     const tempoGasto = 60 - timeLeft.value; // Calcula o tempo gasto
     newRecord = {
       date: currentDate,
-      turns: null, // Não aplicável no modo contra o relógio
+      turns: turns.value, // Não aplicável no modo contra o relógio
       time: tempoGasto, // Record de tempo para o modo contra o relógio
       mode: "timer",
     };
   } else {
     return; // Não salva record para o modo Zen
   }
-
+  console.log("sendo adicionado", newRecord)
+  console.log("turns", turns.value)
   try {
     // Adiciona o novo record à lista de records do usuário logado
     loggedUser.records = loggedUser.records || []; // Verifica se o array de records existe
@@ -584,9 +605,32 @@ const reiniciarJogo = () => {
     startTimer(); // Reinicia o cronômetro
   }
 };
+
+// Função para verificar se o username já existe
+let data = [];
+const getUsers = async () => {
+  const response = await fetch(`http://localhost:4000/users`);
+  data = await response.json();
+  console.log("USERSS>>>", data);
+  return data.length > 0; // Retorna todos os usuários
+};
+
+// Definir o estado reativo para o background color
+const backgroundColor = ref('white');
+
+// Funções para alternar o background
+const setDarkMode = () => {
+  backgroundColor.value = 'black';  // Definir fundo preto
+};
+
+const setLightMode = () => {
+  backgroundColor.value = 'white';  // Definir fundo branco
+};
+
 onMounted(() => {
   initGame();
   loadUserFromStorage();
+  getUsers();
 });
 </script>
 

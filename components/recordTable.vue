@@ -1,6 +1,6 @@
 <template>
   <div style="max-height: 130px; overflow-y: auto">
-    <table class="table w-100">
+    <table class="table table-striped w-100">
       <thead>
         <tr>
           <th scope="col">#</th>

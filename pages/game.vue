@@ -1,225 +1,122 @@
 <template>
-  <div class="content d-flex justify-content-center">
-    <Audio />
-    <div class="row w-100">
-      <div class="col-6" :style="{ backgroundColor: backgroundColor }">
-        <div>
-          <!--<div class="d-flex justify-content-between mb-2">
-            <div>
-              <p>Josué Rufino</p>
-            </div>
-            <div>
-              <span class="text-white fw-bold">Movimentos:</span>
-              <div
-                class="d-flex justify-content-between"
-                style="
-                  background-color: black;
-                  opacity: 0.9; /* Aumentei um pouco a opacidade */
-                  color: white;
-                  border-radius: 3px;
-                  padding: 8px; /* Maior espaçamento para melhorar a legibilidade */
-                  z-index: 0;
-                "
-              >
-                <icon>icon</icon>
-                <span
-                  id="text-white fw-bold"
-                  style="
-                    font-size: 1.2rem; /* Aumenta o tamanho da fonte */
-                    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Adiciona uma sombra leve */
-                  "
-                >
-                  {{ turns }}
-                </span>
-              </div>
-            </div>
-          </div>-->
-          <div id="board" :style="{ backgroundColor: backgroundColor }">
-            <img
-            :style="{ backgroundColor: backgroundColor }"
-              v-for="(tile, index) in boardTiles"
-              :key="index"
-              :src="getImageSrc(tile.src)"
-              draggable="true"
-              @dragstart="dragStart($event, tile, index)"
-              @dragover.prevent
-              @drop="dragDrop($event, index)"
-            />
+  <div>
+    <Sidebar
+      @logout="logout"
+      :timeLeft="timeLeft"
+      :turns="turns"
+      :selectedMode="selectedMode"
+      :startGame="isGame"
+      @reinit="reiniciarJogo"
+    >
+    {{isGame}}
+      <div
+        v-if="!isGame"
+        class="d-flex justify-content-center align-items-center h-75"
+      >
+        <div
+          class="card bg- w-25 p-3"
+          :style="{
+            background: isDarkMode ? ' #1a1b1b' : '#f1f1f1f1',
+            color: isDarkMode ? '#ffffff' : '#000000',
+            transition: 'background 0.3s, color 0.3s',
+          }"
+          style="height: 300px"
+        >
+          <div class="d-flex justify-content-center">
+            <img src="/assets/puzzle.png" style="width: 60px; height: 60px" />
           </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div id="pieces">
-          <img
-            style="cursor: grab"
-            v-for="(piece, index) in pieces"
-            :key="index"
-            :src="getImageSrc(piece.src)"
-            draggable="true"
-            @dragstart="dragStart($event, piece, index)"
-            @dragover.prevent
-            @drop="dragDrop($event, -1)"
-          />
-        </div>
-        <div style="background-color: black; height: 48%; opacity: 0.8">
-          <div class="row w-100 mb-3" style="height: 100%">
-            <div class="col-8 h-100">
-              <div
-                class="p-3 d-flex justify-content-between"
-                style="border-bottom: 1px solid lightgray"
-              >
-                <div class="d-flex">
-                  <img
-                    src="../public/assets/user.png"
-                    style="max-height: 50px"
-                  />
-                  <div class="ms-2">
-                    <p class="mb-0 text-white fw-bold">
-                      {{ loggedUser.username }}
-                    </p>
-                    <span class="text-white">Usuário</span>
-                  </div>
-                </div>
-                <div
-                  class="d-flex justify-content-between align-items-end"
-                  style="cursor: pointer"
-                >
-                  <icon
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal"
-                    @click="getUsers(data)"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      style="color: white; margin-right: 8px"
-                      height="20"
-                      fill="currentColor"
-                      class="bi bi-trophy-fill"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"
-                      /></svg
-                  ></icon>
-
-                  <icon @click="showRecords = !showRecords"
-                    ><svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      style="color: white"
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      class="bi bi-table"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 2h-4v3h4zm0 4h-4v3h4zm0 4h-4v3h3a1 1 0 0 0 1-1zm-5 3v-3H6v3zm-5 0v-3H1v2a1 1 0 0 0 1 1zm-4-4h4V8H1zm0-4h4V4H1zm5-3v3h4V4zm4 4H6v3h4z"
-                      /></svg
-                  ></icon>
-                  <icon style="margin-left: 8px" @click="setDarkMode">
-                    <svg
-                      style="color: white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      class="bi bi-moon-stars-fill"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278"
-                      />
-                      <path
-                        d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.73 1.73 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.73 1.73 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.73 1.73 0 0 0 1.097-1.097zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"
-                      />
-                    </svg>
-                  </icon>
-                  <div>
-                    <icon style="margin-left: 8px" @click="setLightMode"
-                      ><svg
-                        style="color: white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        fill="currentColor"
-                        class="bi bi-brightness-high-fill"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"
-                        /></svg
-                    ></icon>
-                  </div>
-                </div>
-              </div>
-              <div class="d-flex justify-content-center align-items-end">
-                <div class="mt-5 d-flex">
-                  <h6 class="text-center text-white" v-if="!showRecords && !isGame">
-                    Inicie uma partida
-                  </h6>
-                  <h6 class="text-center text-white" v-if="isGame">
-                    Patida iniciada
-                  </h6>
-                </div>
-                <div v-if="selectedMode === 'timer'" class="text-white">
-                  <h1 class="fw-bold">Tempo Restante: {{ timeLeft }}s</h1>
-                </div>
-                <div v-if="selectedMode === 'classic'" class="text-white">
-                  <p class="fw-bold">Movimentos: {{ turns }}</p>
-                </div>
-                <div
-                  v-if="showRecords"
-                  class="w-100 d-flex justify-content-center align-items-end mt-2 ms-2"
-                >
-                  <RecordUsers
-                    :timer="timerRecords"
-                    :classic="ClassicRecords"
-                  />
-                </div>
-              </div>
-            </div>
-            <div
-              class="col-4 d-flex justify-content-center align-items-center"
-              style="border-left: 1px solid lightgray"
+          <div class="text-center text-white mt-3">
+            <p
+              class="mb-0"
+              :style="{
+                color: isDarkMode ? '#ffffff' : '#000000',
+              }"
             >
-              <div class="w-100 me-3">
-                <select
-                  class="form-select mb-3"
-                  aria-label="Default select example"
-                  v-model="selectedMode"
-                >
-                  <option value="zen">Zen</option>
-                  <option value="classic">Clássico</option>
-                  <option value="timer">Contra o relógio</option>
-                </select>
-                <button
-                  class="btn btn-light w-100 mb-3"
-                  style="height: 50px"
-                  @click="startGame()"
-                >
-                  Iniciar
-                </button>
-                <button
-                  class="btn btn-light w-100 mb-3"
-                  style="height: 50px"
-                  @click="reiniciarJogo()"
-                >
-                  Reiniciar
-                </button>
-                <button
-                  class="btn btn-light w-100 mb-3"
-                  style="height: 50px"
-                  @click="logout"
-                >
-                  Sair
-                </button>
+              Bem vindo ao
+            </p>
+            <h4
+              :style="{
+                color: isDarkMode ? '#ffffff' : '#000000',
+              }"
+            >
+              Otaku Puzzle
+            </h4>
+          </div>
+          <div class="mt-3">
+            <label style="font-size: 0.7rem">Escolha o modo de jogo</label>
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              v-model="selectedMode"
+            >
+              <option value="zen">Zen</option>
+              <option value="classic">Clássico</option>
+              <option value="timer">Contra o relógio</option>
+            </select>
+            <button
+              :class="
+                !isDarkMode ? 'btn btn-outline-dark' : 'btn btn-outline-light'
+              "
+              class="w-100 mt-3"
+              @click="startGame()"
+            >
+              Iniciar partida
+            </button>
+          </div>
+        </div>
+      </div>
+      <div v-else class="content d-flex justify-content-center">
+        <Audio />
+
+        <div class="row w-100">
+          <div
+            class="col-6"
+            :style="{
+              background: theme ? ' #1a1b1b' : '#ffffff',
+              color: isDarkMode ? '#ffffff' : '#000000',
+              transition: 'background 0.3s, color 0.3s',
+            }"
+          >
+            <div>
+              <div
+                id="board"
+                :style="{
+                  background: theme ? ' #1a1b1b' : '#ffffff',
+                  color: isDarkMode ? '#ffffff' : '#000000',
+                  transition: 'background 0.3s, color 0.3s',
+                }"
+              >
+                <img
+                  :style="{ border: borderStyle }"
+                  v-for="(tile, index) in boardTiles"
+                  :key="index"
+                  :src="getImageSrc(tile.src)"
+                  draggable="true"
+                  @dragstart="dragStart($event, tile, index)"
+                  @dragover.prevent
+                  @drop="dragDrop($event, index)"
+                />
               </div>
+            </div>
+          </div>
+          <div class="col-6">
+            {{ theme }}
+            <div id="pieces">
+              <img
+                style="cursor: grab"
+                v-for="(piece, index) in pieces"
+                :key="index"
+                :src="getImageSrc(piece.src)"
+                draggable="true"
+                @dragstart="dragStart($event, piece, index)"
+                @dragover.prevent
+                @drop="dragDrop($event, -1)"
+              />
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Sidebar>
   </div>
 </template>
 
@@ -246,6 +143,14 @@ const selectedMode = ref("zen"); // Valor padrão é 'classic'
 const timer = ref(null); // Para o modo contra o relógio
 const timeLeft = ref(60); // Tempo limite para o modo contra o relógio, por exemplo, 60 segundos
 const showRecords = ref(false);
+const isInit = ref(false);
+
+const valor = useState("valorCompartilhado");
+const isDarkMode = ref(valor);
+
+// Exemplo: verificação do tema atual
+console.log("Tema atual:", isDarkMode.value ? "Dark" : "Light");
+console.log("Valor compartilhado:", valor.value);
 
 let loggedUser = "";
 const loadUserFromStorage = () => {
@@ -284,6 +189,7 @@ const logout = () => {
       currTile = null;
       currIndex = null;
       localStorage.removeItem("loggedUser");
+      localStorage.removeItem("puzzleGame");
       router.push("/");
       Swal.fire({
         title: "Logout",
@@ -303,12 +209,15 @@ const initGame = () => {
     isWon.value = savedGame.isWon;
     boardTiles.value = savedGame.boardTiles;
     pieces.value = savedGame.pieces;
+    isInit.value = true;
 
     // Verifica se o jogador já venceu e mostra o Swal
     if (isWon.value) {
-      showWinModal();
+      isInit.value = false;
+      //showWinModal();
     }
   } else {
+    isInit.value = true;
     initBoard();
     initPieces();
   }
@@ -369,7 +278,7 @@ const checkWin = () => {
       return; // Se qualquer peça estiver fora do lugar, não venceu
     }
   }
-  isWon.value = true; // Marca o jogo como vencido
+
   stopTimer(); // Para o cronômetro quando o jogador vencer
   showWinModal(); // Mostra o modal de vitória
   saveGame();
@@ -442,8 +351,8 @@ const addRecord = async () => {
   } else {
     return; // Não salva record para o modo Zen
   }
-  console.log("sendo adicionado", newRecord)
-  console.log("turns", turns.value)
+  console.log("sendo adicionado", newRecord);
+  console.log("turns", turns.value);
   try {
     // Adiciona o novo record à lista de records do usuário logado
     loggedUser.records = loggedUser.records || []; // Verifica se o array de records existe
@@ -514,9 +423,11 @@ const stopTimer = () => {
 };
 
 // Função para iniciar o jogo e o cronômetro se o modo for "Contra o Relógio"
-const isGame = ref(false)
+const isGame = ref(false);
 const startGame = () => {
-  isGame.value = true
+ 
+  isGame.value = true;
+  localStorage.setItem("isGame", isGame.value)
   if (selectedMode.value === "timer") {
     startTimer(); // Inicia o cronômetro para o modo "Contra o Relógio"
   }
@@ -554,20 +465,14 @@ const getUsers = async () => {
   return data.length > 0; // Retorna todos os usuários
 };
 
-// Definir o estado reativo para o background color
-const backgroundColor = ref('white');
 
-// Funções para alternar o background
-const setDarkMode = () => {
-  backgroundColor.value = 'black';  // Definir fundo preto
-};
-
-const setLightMode = () => {
-  backgroundColor.value = 'white';  // Definir fundo branco
-};
+const borderStyle = computed(() => {
+  return `0.5px solid ${isDarkMode.value ? 'black' : 'lightgray'}`;
+});
 
 onMounted(() => {
-  initGame();
+  isGame.value = localStorage.getItem("isGame")
+  initGame()
   loadUserFromStorage();
   getUsers();
 });
@@ -602,12 +507,6 @@ onMounted(() => {
 }
 
 .content {
-  height: 100vh;
-  background-image: url("/assets/game.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  padding: 5px;
   width: 100%;
   display: flex;
 }

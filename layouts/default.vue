@@ -1,6 +1,7 @@
 <template>
   <div>
     <GlobalRecords/>
-    <slot />
+    <NuxtPage />
   </div>
+  
 </template>

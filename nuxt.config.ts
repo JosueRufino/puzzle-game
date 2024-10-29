@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
     head: {
-      title: "Josué's Puzzle Challenge",
+      title: "Otaku Puzzle ",
       script: [
         {
           defer: true,
@@ -95,8 +95,10 @@ export default defineNuxtConfig({
       ],
     },
   },
+  plugins: ["~/plugins/theme.js"],
   css: [
     "bootstrap/dist/css/bootstrap.min.css",
+    'bootstrap-icons/font/bootstrap-icons.css'
   ],
   ssr: false,
 });

@@ -42,6 +42,10 @@ function reinit() {
   emit("reinit");
 }
 
+function backToInit() {
+  emit("backToInit");
+}
+
 let loggedUser = "";
 const loadUserFromStorage = () => {
   const user = localStorage.getItem("loggedUser");
@@ -102,7 +106,7 @@ const loadUserFromStorage = () => {
             ><i class="bi bi-person-lines-fill"></i> Perfil</a
           >
         </li>
-        <li>
+        <li data-bs-toggle="modal" data-bs-target="#recordModal">
           <a
             :style="{
               color: isDarkMode ? '#ffffff' : '#000000',
@@ -171,7 +175,7 @@ const loadUserFromStorage = () => {
           <div
             class="w-100 h-100 d-flex justify-content-between align-items-center"
           >
-            <div>
+            <div class="d-flex">
               <button
                 @click="toggleSidebar"
                 :class="
@@ -182,45 +186,75 @@ const loadUserFromStorage = () => {
               >
                 <i :class="!isSidebarOpen ? 'bi bi-x-lg' : 'bi bi-list'"></i>
               </button>
-              <!--<div class="d-flex justify-content-center align-items-end">
-                <div
-                  v-if="selectedMode === 'timer' && startGame"
-                  class="text-white"
-                >
-                  <h1
-                    class="fw-bold"
-                    :style="{
-                      color: isDarkMode ? '#ffffff' : '#000000',
-                    }"
-                  >
-                    Tempo Restante: {{ timeLeft }}s
-                  </h1>
+              <button
+                v-if="selectedMode === 'timer' && startGame"
+                :class="
+                  !isDarkMode ? 'btn btn-outline-dark' : 'btn btn-outline-light'
+                "
+                class="btn-md ms-2"
+                disabled
+              >
+                <div class="d-flex justify-content-around w-100">
+                  <div>
+                    <i
+                      class="bi bi-stopwatch-fill fs-4"
+                      :style="{
+                        color: !isDarkMode ? '#000000' : '#ffffff',
+                      }"
+                    ></i>
+                  </div>
+                  <div class="ms-3">
+                    <h5
+                      class="fw-bold mt-1"
+                      :style="{
+                        color: !isDarkMode ? '#000000' : '#ffffff',
+                      }"
+                    >
+                      {{ timeLeft }}s
+                    </h5>
+                  </div>
                 </div>
-                <div
-                  v-if="selectedMode === 'classic' && startGame"
-                  class="text-white"
-                >
-                  <p
-                    class="fw-bold d-flex"
-                    :style="{
-                      color: isDarkMode ? '#ffffff' : '#000000',
-                    }"
-                  >
-                    Movimentos: {{ turns }}
-                  </p>
+              </button>
+              <button
+                v-if="selectedMode === 'classic' && startGame"
+                :class="
+                  !isDarkMode ? 'btn btn-outline-dark' : 'btn btn-outline-light'
+                "
+                class="btn-md ms-2"
+                disabled
+              >
+                <div class="d-flex justify-content-around w-100">
+                  <div>
+                    <i
+                      class="bi bi-arrows-move fs-4"
+                      :style="{
+                        color: !isDarkMode ? '#000000' : '#ffffff',
+                      }"
+                    ></i>
+                  </div>
+                  <div class="ms-3">
+                    <h5
+                      class="fw-bold mt-1"
+                      :style="{
+                        color: !isDarkMode ? '#000000' : '#ffffff',
+                      }"
+                    >
+                      {{ turns }}
+                    </h5>
+                  </div>
                 </div>
-                <div
-                  v-if="showRecords"
-                  class="w-100 d-flex justify-content-center align-items-end mt-2 ms-2"
-                >
-                  <RecordUsers
-                    :timer="timerRecords"
-                    :classic="ClassicRecords"
-                  />
-                </div>
-              </div>-->
+              </button>
             </div>
             <div v-if="startGame">
+              <button
+                :class="
+                  !isDarkMode ? 'btn btn-outline-dark' : 'btn btn-outline-light'
+                "
+                class="btn-md me-3"
+                @click="backToInit"
+              >
+                Abandonar jogo
+              </button>
               <button
                 :class="
                   !isDarkMode ? 'btn btn-outline-dark' : 'btn btn-outline-light'
@@ -229,15 +263,6 @@ const loadUserFromStorage = () => {
                 @click="reinit"
               >
                 Reiniciar
-              </button>
-              <button
-                :class="
-                  !isDarkMode ? 'btn btn-outline-dark' : 'btn btn-outline-light'
-                "
-                class="btn-md"
-                @click="reinit"
-              >
-                Voltar ao inicio
               </button>
             </div>
           </div>

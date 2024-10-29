@@ -19,6 +19,7 @@
             ></button>
           </div>
           <div class="modal-body">
+          
             <div class="w-100">
               <ul class="nav nav-tabs w-100">
                 <li class="nav-item">
@@ -50,7 +51,7 @@
                     Recordes do modo clássico
                   </p>
                   <!-- Passando os records para o RecordTable -->
-                  <RecordTable :records="classicRecords" mode="classic" />
+                  <RecordTable :records="classicRecords" mode="classic" :isGlobal ="true"  />
                 </div>
   
                 <!-- Tabela de recordes do modo contra o relógio -->

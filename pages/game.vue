@@ -7,8 +7,8 @@
       :selectedMode="selectedMode"
       :startGame="isGame"
       @reinit="reiniciarJogo"
+      @backToInit="backToInit"
     >
-    {{isGame}}
       <div
         v-if="!isGame"
         class="d-flex justify-content-center align-items-center h-75"
@@ -116,6 +116,7 @@
           </div>
         </div>
       </div>
+      <RecordUsers :timer="timerRecords" :classic="ClassicRecords" />
     </Sidebar>
   </div>
 </template>
@@ -171,6 +172,16 @@ const timerRecords = computed(() =>
   )
 );
 
+const backToInit = () => {
+  isGame.value = false;
+  timeLeft.value = 60;
+  turns.value = 0;
+  isWon.value = false;
+  currTile = null;
+  currIndex = null;
+  localStorage.removeItem("puzzleGame");
+};
+
 const logout = () => {
   Swal.fire({
     title: "Logout",
@@ -190,6 +201,7 @@ const logout = () => {
       currIndex = null;
       localStorage.removeItem("loggedUser");
       localStorage.removeItem("puzzleGame");
+      localStorage.removeItem("isGame");
       router.push("/");
       Swal.fire({
         title: "Logout",
@@ -425,9 +437,8 @@ const stopTimer = () => {
 // Função para iniciar o jogo e o cronômetro se o modo for "Contra o Relógio"
 const isGame = ref(false);
 const startGame = () => {
- 
   isGame.value = true;
-  localStorage.setItem("isGame", isGame.value)
+  localStorage.setItem("isGame", isGame.value);
   if (selectedMode.value === "timer") {
     startTimer(); // Inicia o cronômetro para o modo "Contra o Relógio"
   }
@@ -465,14 +476,13 @@ const getUsers = async () => {
   return data.length > 0; // Retorna todos os usuários
 };
 
-
 const borderStyle = computed(() => {
-  return `0.5px solid ${isDarkMode.value ? 'black' : 'lightgray'}`;
+  return `0.5px solid ${isDarkMode.value ? "black" : "lightgray"}`;
 });
 
 onMounted(() => {
-  isGame.value = localStorage.getItem("isGame")
-  initGame()
+  isGame.value = localStorage.getItem("isGame");
+  initGame();
   loadUserFromStorage();
   getUsers();
 });

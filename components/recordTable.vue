@@ -1,12 +1,13 @@
 <template>
   <div style="max-height: 130px; overflow-y: auto">
-    <table class="table table-striped w-100">
+    <table class="table table-striped w-100" v-if="records.length">
       <thead>
         <tr>
           <th scope="col">#</th>
           <th scope="col">Modo</th>
           <th scope="col" v-if="mode === 'timer'">Tempo</th>
           <th scope="col" v-if="mode === 'classic'">jogadas</th>
+          <th scope="col">Usuário</th>
           <th scope="col">Data</th>
         </tr>
       </thead>
@@ -16,10 +17,14 @@
           <td>{{ record.mode }}</td>
           <td v-if="mode === 'timer'">{{ record.time }}s</td>
           <td v-if="mode === 'classic'">{{ record.turns }}</td>
+          <td>{{  record.username || "Eu"}}</td>
           <td>{{ record.date }}</td>
         </tr>
       </tbody>
     </table>
+    <div v-else class="text-center">
+      <p>Sem recordes</p>
+    </div>
   </div>
 </template>
 
@@ -35,7 +40,13 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  isGlobal: {
+    type: Boolean,
+    required: false,
+  },
 });
+
+
 </script>
 
 <style scoped>

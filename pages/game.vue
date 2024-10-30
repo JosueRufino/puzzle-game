@@ -9,6 +9,7 @@
       @reinit="reiniciarJogo"
       @backToInit="backToInit"
     >
+      <Audio :mode="selectedMode" v-if="isGame" />
       <div
         v-if="!isGame"
         class="d-flex justify-content-center align-items-center h-75"
@@ -66,8 +67,6 @@
         </div>
       </div>
       <div v-else class="content d-flex justify-content-center">
-        <Audio />
-
         <div class="row w-100">
           <div
             class="col-6"
@@ -100,7 +99,6 @@
             </div>
           </div>
           <div class="col-6">
-            {{ theme }}
             <div id="pieces">
               <img
                 style="cursor: grab"
@@ -111,6 +109,23 @@
                 @dragstart="dragStart($event, piece, index)"
                 @dragover.prevent
                 @drop="dragDrop($event, -1)"
+              />
+            </div>
+            <div class="d-flex justify-content-end">
+              <img
+                v-if="selectedMode === 'timer'"
+                src="../public/assets/demon.webp"
+                style="max-height: 120px"
+              />
+              <img
+                v-else-if="selectedMode === 'classic'"
+                src="../public/assets/pain.jpeg"
+                style="max-height: 150px"
+              />
+              <img
+                v-else
+                src="../public/assets/jujutsu.jpeg"
+                style="max-height: 150px"
               />
             </div>
           </div>
@@ -181,6 +196,8 @@ const backToInit = () => {
   currTile = null;
   currIndex = null;
   localStorage.removeItem("puzzleGame");
+  localStorage.removeItem("mode");
+  selectedMode.value = "zen";
 };
 
 const logout = () => {
@@ -203,6 +220,7 @@ const logout = () => {
       localStorage.removeItem("loggedUser");
       localStorage.removeItem("puzzleGame");
       localStorage.removeItem("isGame");
+      localStorage.removeItem("mode");
       router.push("/");
       Swal.fire({
         title: "Logout",
@@ -422,14 +440,16 @@ const startTimer = () => {
     if (timeLeft.value === 0) {
       clearInterval(timer.value); // Para o cronômetro ao chegar a 0
       // Exibe mensagem quando o tempo acaba
-      Swal.fire({
-        title: "Tempo Esgotado!",
-        text: "Você não conseguiu completar o quebra-cabeça a tempo.",
-        icon: "error",
-        confirmButtonText: "Tentar Novamente",
-      }).then(() => {
-        reiniciarJogo(); // Reinicia o jogo quando o jogador confirma
-      });
+      if (selectedMode.value === "timer") {
+        Swal.fire({
+          title: "Tempo Esgotado!",
+          text: "Você não conseguiu completar o quebra-cabeça a tempo.",
+          icon: "error",
+          confirmButtonText: "Tentar Novamente",
+        }).then(() => {
+          reiniciarJogo(); // Reinicia o jogo quando o jogador confirma
+        });
+      }
     }
   }, 1000); // Executa a cada 1 segundo (1000 milissegundos)
 };
@@ -444,6 +464,7 @@ const isGame = ref(false);
 const startGame = () => {
   isGame.value = true;
   localStorage.setItem("isGame", isGame.value);
+  localStorage.setItem("mode", selectedMode.value);
   if (selectedMode.value === "timer") {
     startTimer(); // Inicia o cronômetro para o modo "Contra o Relógio"
   }
@@ -487,6 +508,7 @@ const borderStyle = computed(() => {
 
 onMounted(() => {
   isGame.value = localStorage.getItem("isGame");
+  selectedMode.value = localStorage.getItem("mode");
   initGame();
   loadUserFromStorage();
   getUsers();

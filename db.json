@@ -40,6 +40,18 @@
           "turns": 17,
           "time": null,
           "mode": "classic"
+        },
+        {
+          "date": "2024-10-30",
+          "turns": 16,
+          "time": null,
+          "mode": "classic"
+        },
+        {
+          "date": "2024-10-30",
+          "turns": 20,
+          "time": null,
+          "mode": "classic"
         }
       ]
     },

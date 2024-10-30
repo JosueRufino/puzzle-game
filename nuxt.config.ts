@@ -16,7 +16,7 @@ export default defineNuxtConfig({
         {
           rel: "icon",
           type: "image/png",
-          href: "/static/assets/logo.png",
+          href: "~/assets/puzzle.png",
         },
       ],
       meta: [
@@ -76,17 +76,17 @@ export default defineNuxtConfig({
         {
           hid: "og:url",
           property: "og:url",
-          content: "/static/assets/logo.png",
+          content: "~/assets/puzzle.png",
         },
         {
           hid: "og:image",
           property: "og:image",
-          content: "/static/assets/logo.png",
+          content:"~/assets/puzzle.png",
         },
         {
           hid: "og:image:secure_url",
           property: "og:image:secure_url",
-          content: "/static/assets/logo.png",
+          content: "~/assets/puzzle.png",
         },
         {
           property: "og:locale",

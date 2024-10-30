@@ -117,6 +117,7 @@
         </div>
       </div>
       <RecordUsers :timer="timerRecords" :classic="ClassicRecords" />
+      <Profile :profile="loggedUser" />
     </Sidebar>
   </div>
 </template>
@@ -259,7 +260,11 @@ const initPieces = () => {
 };
 
 const getImageSrc = (filename) => {
-  return `/assets/images/${filename}`;
+  let image = "";
+  if (selectedMode.value === "zen") image = "images3";
+  else if (selectedMode.value === "timer") image = "images";
+  else image = "images2";
+  return `/assets/${image}/${filename}`;
 };
 
 const dragStart = (e, tile, index) => {

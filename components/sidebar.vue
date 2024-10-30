@@ -96,7 +96,7 @@ const loadUserFromStorage = () => {
 
       <ul class="list-unstyled components">
         <p>Suas opções</p>
-        <li>
+        <li data-bs-toggle="modal" data-bs-target="#userProfileModal">
           <a
             :style="{
               color: isDarkMode ? '#ffffff' : '#000000',
